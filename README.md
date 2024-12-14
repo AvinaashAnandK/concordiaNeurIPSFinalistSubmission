@@ -12,7 +12,11 @@ This repository contains the code for an agent designed to compete in the Concor
 
 **Refinement:** The core of this challenge lies not just in *inferring* information but in *prioritizing* what to infer given the resource constraints. The agent needs a strategy to determine which unknowns are most critical to resolve at each stage of the simulation.
 
-**Solution:** The agent employs a structured information framework (detailed below) to organize and prioritize information needs. It focuses on inferring information most relevant to the current situation and the agent's immediate goals, updating its beliefs iteratively.
+**Solution:** The agent employs a structured information framework to organize information into the following three blocks, which are updated based on new observations:
+
+*   **Scenario Understanding:** What is the world that I'm in?
+*   **Participant Understanding:** Who are the others in this world?
+*   **Self Understanding:** What are my goals & objectives in this world?
 
 ### 2. Resource Constraints (API Calls and Tokens)
 
@@ -22,7 +26,7 @@ This repository contains the code for an agent designed to compete in the Concor
 
 **Refinement:** The core issue is *optimization under scarcity*. The agent needs a framework to maximize the value derived from each API call, balancing the need for information with the cost of obtaining it.
 
-**Solution:** The agent utilizes a structured information framework to minimize redundant queries and prioritize the most valuable information. It also employs a custom-designed action component (`ConcatActComponent`) that efficiently integrates information from various sources, reducing the need for multiple API calls.
+**Solution:**  The agent employs a structured information framework to minimize redundant queries and prioritize the most valuable information. It also employs a custom-designed action component (`ConcatActComponent`) that efficiently integrates information from various sources, reducing the need for multiple API calls.
 
 ### 3. Scenario Diversity and Hidden Scenarios
 
@@ -32,7 +36,7 @@ This repository contains the code for an agent designed to compete in the Concor
 
 **Refinement:** The challenge is to design a *meta-strategy* or a set of guiding principles that are robust to scenario variations. This requires identifying common underlying structures or decision-making patterns across different game types.
 
-**Solution:** The agent's strategy is built upon a foundation of decision theories (e.g., 'gameTheo_boundRat', 'prospect_theory'). These theories provide a general framework for decision-making that can be applied across different scenarios. The agent's behavior is guided by these principles rather than scenario-specific rules.
+**Solution:** The agent's *meta-strategy* is built upon a foundation of decision theories. These theories provide a general framework for decision-making that can be applied across different scenarios. The agent's behavior is guided by these principles rather than scenario-specific rules. Experiments were run using *meta-strategies* drafted using concepts from the following 10 theories / combination of theories: `Game Theory + Bounded Rationality`, `Prospect Theory`, `Social Identity Theory`, `Utility Maximization`, `Game Theory`, `Distributed Cognition`, `Loss Aversion`, `Social Identity + Loss Aversion + Distributed Cognition`, `Social Identity + Loss Aversion + Distributed Cognition + Prospect Theory`, `Social Identity + Game Theory + Distributed Cognition`.
 
 ## II. Strategic Challenges
 
@@ -44,7 +48,7 @@ This repository contains the code for an agent designed to compete in the Concor
 
 **Refinement:** The challenge is to find the *optimal level of abstraction* when applying decision theories. More detailed, nuanced instructions (as seen in the "big" variant) are beneficial but must be balanced against resource constraints.
 
-**Solution:** The agent uses the 'gameTheo_boundRat' decision theory in the "big" variant configuration. This provides a detailed framework for decision-making, incorporating concepts like bounded rationality and game theory. The implementation of this theory is carefully crafted within the prompt to guide the LLM effectively.
+**Solution:** The agent uses the `Game Theory + Bounded Rationality` decision theory in the "big" variant configuration in the final submission. The implementation of this theory is carefully crafted within the prompt to guide the LLM effectively.
 
 ## III. Implementation Challenges
 
@@ -60,13 +64,14 @@ This repository contains the code for an agent designed to compete in the Concor
 
 ### 6. Character Strategy for Enhanced Reasoning
 
-**Challenge:**  To improve the LLM's reasoning and make the agent's behavior more interpretable, a mechanism was needed to encourage the LLM to articulate its strategic thinking.
+**Challenge:** To improve the LLM's reasoning and make the agent's behavior more interpretable, a mechanism was needed to encourage the LLM to articulate its strategic thinking.
 
 **Implication:** Explicitly prompting the LLM to articulate its strategic thinking enhances its decision-making and provides insights into its internal processes.
 
 **Refinement:** The challenge is to refine this mechanism to maximize its effectiveness, providing specific guidelines on what to include in the strategy, how to structure it, and how to connect it to the final action.
 
 **Solution:** The agent's prompt includes a "character strategy" section. This section requires the LLM to outline its strategic thinking before generating an action. It includes 11 key considerations:
+
 ```
 1. Key points from each input section.
 2. Summary of the Trusted Advisor's Guidance.
@@ -80,6 +85,7 @@ This repository contains the code for an agent designed to compete in the Concor
 10. Formulation of a suggestion.
 11. Explicitly stating how each planned action connects to the character's motivation.
 ```
+
 This detailed breakdown helps the LLM reason through its decisions and provides valuable insights for debugging and improvement.
 
 ### 7. Handling Numeric Information and Thresholds in `ConcatActComponent`
@@ -89,34 +95,36 @@ This detailed breakdown helps the LLM reason through its decisions and provides 
 **Implication:** The component must extract, interpret, and utilize numeric data from various sources and perform calculations to guide actions.
 
 **Solution:** The `ConcatActComponent` is designed to handle numeric information through:
+
 *   **Context Assembly:** It gathers information from different components, including "Self Understanding" (containing aspiration levels, satisficing thresholds) and the "Trusted Advisor" (providing numeric targets or ranges).
 *   **Additional Instructions:** The prompt includes specific instructions for "Threshold Analysis," guiding the LLM to identify numerical values, determine if they are minimums or maximums, and perform calculations.
 *   **Character Strategy:** The "character strategy" section reinforces this by requiring the agent to identify important thresholds, its position relative to them, and to show calculations for any values.
 
+## IV. Challenges Specific to the Final Submission
 
-## IV. Further Considerations
+### 8. Assessing Performance without Direct Feedback
 
-### 10. Structured Information Framework
+**Challenge:** Limited feedback mechanisms were available. Only baselines were scores of previous submissions, making it difficult to assess the effectiveness of specific strategies or prompt changes.
 
-**Observation:** A well-defined structure helps the LLM process and utilize information more effectively.
+**Implication:** Difficulty in fine-tuning the agent's behavior and identifying areas for improvement.
 
-**Solution:** The agent employs a structured information framework with three main blocks:
+**Solution:** The development process focused on point-in-time assessments and analyzing the LLM's reasoning process based on its output (e.g., the "final act component").
 
-*   Optimizing the update frequency for each block, and exploring ways to dynamically adjust the framework based on the current scenario.
-*   Explicitly extracting and storing Numeric information (e.g. purchase price) to store them as states.
+### 9. Interpreting Elo Scores and Agent Selection with Limited Submissions
 
+**Challenge:** Elo scores are relative and change depending on the pool of agents being compared.
 
+**Implication:** Difficulty in determining the absolute performance of an agent and selecting the best one for the final submission.
 
-### 6. Performance Evaluation with Limited Feedback
+**Solution:**
+*   Recognize that Elo is a comparative metric.
+*   Analyze the win/loss matrix to understand agent performance against specific opponents.
+*   Deep dive into poor-performance scenarios (i.e., Loss scenarios) and observe the action trail to understand what is going wrong.
 
-**Challenge:** The lack of direct feedback beyond the overall baseline score makes it difficult to assess the effectiveness of specific strategies or prompt changes during development.
+## V. Further Considerations
 
-**Implication:** Debugging and fine-tuning the agent's behavior is challenging. Isolating the impact of individual decisions or prompt modifications is difficult without detailed feedback.
-
-**Refinement:** The challenge is to develop *alternative evaluation methods* that do not rely on direct feedback.
-
-**Solution:** The agent's development process focuses on point-in-time assessments and analyzing the LLM's reasoning process based on its output (e.g., the "final act component"). The "character strategy" section (described below) also aids in understanding the agent's decision-making process.
-
+*   Optimizing the update frequency for each block of the structured information framework and exploring ways to dynamically adjust the framework based on the current scenario.
+*   Explicitly extracting and storing numeric information (e.g., purchase price) to store them as states for easier manipulation and analysis.
 
 ## Conclusion
 
