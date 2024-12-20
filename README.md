@@ -1,6 +1,6 @@
 # Concordia Competition Agent: Challenges and Solutions
 
-This repository contains a top-5 ranked submission for the Concordia Competition at NeurIPS 2024, which challenged participants to develop cooperative AI agents capable of effective social interaction under extreme information asymmetry. The agents needed to generalize across various scenarios within the [Google DeepMind Concordia Framework](https://github.com/google-deepmind/concordia). The core innovation lies in the agent's ability to maintain sophisticated multi-agent reasoning within strict computational constraints (7k token context window and 1000 API calls), mirroring real-world deployment challenges for large language models.
+This repository contains the 2nd ranked submission for the Concordia Competition at NeurIPS 2024, which challenged participants to develop cooperative AI agents capable of effective social interaction under extreme information asymmetry. The agents needed to generalize across various scenarios within the [Google DeepMind Concordia Framework](https://github.com/google-deepmind/concordia). The core innovation lies in the agent's ability to maintain sophisticated multi-agent reasoning within strict computational constraints (7k token context window and 1000 API calls), mirroring real-world deployment challenges for large language models.
 
 ## I. Core Challenges
 
